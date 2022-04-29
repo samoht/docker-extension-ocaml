@@ -1,0 +1,21 @@
+{
+  "name": "hello",
+  "provider": "Tarides",
+  "icon": "docker.svg",
+  "vm": {
+    "composefile": "docker-compose.yaml",
+    "exposes": {
+      "socket": "extension-hello.sock"
+    }
+  },
+  "ui": {
+    "dashboard-tab": {
+      "title": "Hello",
+      "src": "index.html",
+      "root": "ui",
+      "backend": {
+        "socket": "extension-hello.sock"
+      }
+    }
+  }
+}

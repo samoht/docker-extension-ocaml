@@ -1,0 +1,18 @@
+opam-version: "2.0"
+maintainer:   "thomas@gazagnaire.org"
+authors:      ["Thomas Gazagnaire"]
+license:      "ISC"
+homepage:     "https://github.com/samoht/docker-extension-ocaml"
+bug-reports:  "https://github.com/samoht/docker-extension-ocaml/issues"
+dev-repo:     "git+https://github.com/samoht/docker-extension-ocaml.git"
+doc:          "https://samoht.github.io/docker-extension-ocaml/"
+
+depends: [
+  "ocaml"   {>= "4.08.0"}
+  "dune"    {>= "2.9.0"}
+  "dream"
+]
+
+pin-depends: [
+  ["dream.dev" "git+https://github.com/samoht/dream#unix-domain-socket"]
+]
