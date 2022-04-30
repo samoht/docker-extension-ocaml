@@ -15,3 +15,8 @@ val get : service -> string -> string Fut.t
 val vm_service : t -> service
 (** [vm_service t] is the service connected to the Docker Desktop virtual
     machine. *)
+
+(** {1 User Notifications} *)
+
+val success : t -> string -> unit
+(** Display a toast message of type success. *)

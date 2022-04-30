@@ -18,11 +18,9 @@ let main () =
   (* Set-up the page structure *)
   let root = get_id "root" in
   let button = El.button [ El.txt' "Call backend" ] in
-  let pre = El.pre [ El.txt' "[..]" ] in
-  El.set_children root [ button; pre ];
+  El.set_children root [ button ];
 
   (* Add onClick events *)
-  let update_pre x = El.set_children pre [ El.txt' x ] in
-  Ev.listen Ev.click (fun _ -> call_hello update_pre) (El.as_target button)
+  Ev.listen Ev.click (fun _ -> call_hello (Dd.success dd)) (El.as_target button)
 
 let () = main ()
