@@ -1,28 +1,29 @@
-FROM ocaml/opam:alpine-ocaml-4.14 AS builder
+FROM --platform=$BUILDPLATFORM ocaml/opam:alpine-ocaml-4.14 AS builder
 RUN sudo apk add --update make libev-dev openssl-dev openssl-libs-static
 ENV OPAMYES=1
 ENV DUNE_CACHE=enabled
 USER opam
-WORKDIR /backend
+WORKDIR /src
 COPY hello.opam .
 RUN --mount=type=cache,target=/opam/.cache/dune \
     opam install . --deps
-COPY vm/main.ml vm/dune vm/dune-project .
-RUN --mount=type=cache,target=/opam/.cache/dune \
-    opam exec -- dune build main.exe
-RUN mkdir bin && mv _build/default/main.exe bin/service
+COPY dune-project .
+RUN sudo mkdir /out && sudo chown opam:opam /out
 
-FROM --platform=$BUILDPLATFORM node:17.7-alpine3.14 AS client-builder
-WORKDIR /ui
-# cache packages in layer
-COPY ui/package.json /ui/package.json
-COPY ui/package-lock.json /ui/package-lock.json
-RUN --mount=type=cache,target=/usr/src/app/.npm \
-    npm set cache /usr/src/app/.npm && \
-    npm ci
-# install
-COPY ui /ui
-RUN npm run build
+FROM builder AS vm
+WORKDIR /src/vm
+COPY vm/main.ml vm/dune .
+RUN --mount=type=cache,target=/opam/.cache/dune \
+    opam exec -- dune build --profile=static main.exe
+RUN mv ../_build/default/vm/main.exe /out/service
+
+FROM builder AS ui
+WORKDIR /src/ui
+COPY ui/ui.ml ui/dd.ml ui/dd.mli ui/dune ui/index.html .
+RUN --mount=type=cache,target=/opam/.cache/dune \
+    opam exec -- dune build --profile=release ui.bc.js
+RUN mv ../_build/default/ui/ui.bc.js /out/ui.js && \
+    mv index.html /out/index.html
 
 FROM alpine
 LABEL org.opencontainers.image.title="hello" \
@@ -34,9 +35,9 @@ LABEL org.opencontainers.image.title="hello" \
     com.docker.extension.publisher-url="" \
     com.docker.extension.additional-urls=""
 
-COPY --from=builder /backend/bin/service /
+COPY --from=vm /out/service /
 COPY docker-compose.yaml .
 COPY metadata.json .
 COPY docker.svg .
-COPY --from=client-builder /ui/build ui
+COPY --from=ui /out ui
 CMD /service -socket /run/guest-services/extension-hello.sock

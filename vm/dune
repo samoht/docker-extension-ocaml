@@ -1,4 +1,7 @@
 (executable
   (name main)
-  (flags (:standard -cclib -static -cclib -no-pie))
+  (public_name service)
   (libraries dream))
+
+(env
+ (static (link_flags -cclib -static -cclib -no-pie)))
