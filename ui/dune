@@ -1,0 +1,4 @@
+(executable
+  (name ui)
+  (modes js)
+  (libraries brr))

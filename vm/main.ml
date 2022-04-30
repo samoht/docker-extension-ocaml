@@ -2,7 +2,8 @@ let usage_msg = "main [--socket <path>]"
 let socket_path = ref "/run/guest/volumes-service.sock"
 
 let hello =
-  Dream.router [ (Dream.get "/hello" @@ fun _request -> Dream.json "hello") ]
+  Dream.router
+    [ (Dream.get "/hello" @@ fun _request -> Dream.json "hello from OCaml") ]
 
 let () =
   Arg.parse
