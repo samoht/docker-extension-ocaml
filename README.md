@@ -1,4 +1,4 @@
-### Template for create Docker extension in OCaml
+### Create Docker Desktop extensions in OCaml
 
 ### Usage
 
