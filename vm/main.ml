@@ -14,6 +14,6 @@ let () =
     ]
     (fun _ -> ())
     usage_msg;
-  Sys.remove !socket_path;
+  if Sys.file_exists !socket_path then Sys.remove !socket_path;
   Dream.log "Starting listening on %s\n" !socket_path;
   Dream.run ~socket_path:!socket_path hello
